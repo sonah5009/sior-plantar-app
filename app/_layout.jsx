@@ -7,11 +7,11 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen
           name="index"
-          options={{ title: "Home", headerShown: false }}
+          options={{ title: "Home", headerShown: true }}
         />
         <Stack.Screen
           name="measurePressure"
-          options={{ title: "measurePressure", headerShown: false }}
+          options={{ title: "measurePressure", headerShown: true }}
         />
       </Stack>
     </SafeAreaProvider>
