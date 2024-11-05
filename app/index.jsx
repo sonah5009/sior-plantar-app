@@ -15,7 +15,7 @@ export default function Index() {
         asChild
       >
         <Pressable style={styles.button}>
-          <Text style={styles.buttontext}>measurePressure</Text>
+          <Text style={styles.buttontext}>나에게 딱맞는 신발 찾으러 가기</Text>
         </Pressable>
       </Link>
     </View>
