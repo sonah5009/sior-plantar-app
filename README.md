@@ -2,6 +2,14 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Flow
+
+1. 첫화면에는 내 발 측정하러가기 버튼이 있어.
+2. 발압력측정하기 버튼.(10초 동안 측정 중 애니메이션 생성), 아두이노 시리얼 통신을 통해 압력값 받아오기
+3. 휴대폰 / 아이패드 카메라를 통해 발 사이즈 측정하기(파이썬으로 open cv2 활용하여 모델 만들 예정). 사이즈 모델은 추후에 연결예정이므로 카메라 기능만 구현하여 png파일을 저장하여 백엔드로 보낼 것(python)
+4. 나에게 맞는 신발 진단 중 (로딩창)
+5. 상단 30%에 신발 하나 추천, 하단에는 3개 이상 carousel
+
 ## Get started
 
 1. Install dependencies
