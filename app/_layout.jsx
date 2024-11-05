@@ -5,7 +5,14 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <Stack>
-        <Stack.Screen name="index" />
+        <Stack.Screen
+          name="index"
+          options={{ title: "Home", headerShown: false }}
+        />
+        <Stack.Screen
+          name="measurePressure"
+          options={{ title: "measurePressure", headerShown: false }}
+        />
       </Stack>
     </SafeAreaProvider>
   );
