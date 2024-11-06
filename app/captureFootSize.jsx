@@ -35,9 +35,9 @@ export default function captureFootSize() {
       const response = await fetch(`${host}/upload`, {
         // const response = await fetch("http://192.168.0.18:5000/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
         body: JSON.stringify({
           uri: obj.uri,
           name: obj.uri.split("/")[obj.uri.split("/").length - 1], // 동적으로 이름을 생성할 수 있습니다 (예: timestamp, uuid 사용)
@@ -45,8 +45,8 @@ export default function captureFootSize() {
         }),
       });
       console.log("hey");
-      const responseData = await response.json();
-      console.log(responseData);
+
+      console.log(response);
       if (response.ok) {
         setImageURI(`${host}/uploads/${responseData.filename}`);
         Alert.alert("Image Processed", "Your foot size has been calculated.");
