@@ -28,5 +28,8 @@ def upload_file():
     else:
         return jsonify({"error": "Allowed file types are png, jpg, jpeg"}), 400
 
+# if __name__ == '__main__':
+#     app.run(debug=True, host='0.0.0.1', port=5000)
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.1', port=5000)
+    app.run(debug=True, host='192.168.0.18', port=5000)
