@@ -1,50 +1,48 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Button, Image, Alert, StyleSheet } from "react-native";
-import { Camera } from "expo-camera";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system"; // Base64 인코딩을 위해 필요
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
+import {
+  Camera,
+  CameraType,
+  CameraView,
+  useCameraPermissions,
+} from "expo-camera";
+import { MaterialIcons } from "@expo/vector-icons"; // 아이콘을 위해 추가
 
-export default function captureFootSize() {
-  const [hasPermission, setHasPermission] = useState(null);
+const WINDOW_HEIGHT = Dimensions.get("window").height;
+const WINDOW_WIDTH = Dimensions.get("window").width;
+
+export default function CaptureFootSize() {
   const [imageURI, setImageURI] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef(null);
 
   const takeImage = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.canceled) {
-      await sendImageToServer(result.assets[0]); // URI 전달
+    if (cameraRef.current) {
+      const photo = await cameraRef.current?.takePictureAsync();
+      setImageURI(photo.uri);
+      await sendImageToServer(photo);
     }
   };
 
-  const sendImageToServer = async (obj) => {
+  const sendImageToServer = async (photo) => {
+    // photo: {height, uri, width}
     const formData = new FormData();
     const host = "http://192.168.0.18:5000";
-    // Base64로 인코딩
-    const base64Image = await FileSystem.readAsStringAsync(obj.uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
 
-    // 이미지 파일 생성
     const imageFile = {
-      uri: obj.uri,
-      type: "image/jpeg", // 또는 적절한 mime 타입
-      name: obj.uri.split("/").pop(),
+      uri: photo.uri,
+      type: "image/jpeg",
+      name: photo.uri.split("/").pop(),
     };
-    // FormData에 파일 추가
     formData.append("file", imageFile);
-
-    // 파일명 추출
-    const filename = obj.uri.split("/").pop();
 
     try {
       const response = await fetch(`${host}/upload`, {
@@ -54,11 +52,9 @@ export default function captureFootSize() {
         },
         body: formData,
       });
-      console.log("reposne check");
-      console.log(response.ok);
+
       if (response.ok) {
         const responseData = await response.json();
-        console.log(responseData);
         setImageURI(`${host}/uploads/${responseData.filename}`);
         Alert.alert("Image Processed", "Your foot size has been calculated.");
       } else {
@@ -70,17 +66,42 @@ export default function captureFootSize() {
     }
   };
 
-  if (hasPermission === null) {
+  if (!permission) {
     return <View />;
   }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Button title="Take a picture" onPress={takeImage} />
-      {imageURI && <Image source={{ uri: imageURI }} style={styles.image} />}
+      {!imageURI ? (
+        <CameraView ref={cameraRef} style={styles.camera} ratio="16:9">
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.captureButton} onPress={takeImage}>
+              <MaterialIcons name="camera" size={50} color="white" />
+            </TouchableOpacity>
+          </View>
+        </CameraView>
+      ) : (
+        <View style={styles.previewContainer}>
+          <Image source={{ uri: imageURI }} style={styles.preview} />
+          <TouchableOpacity
+            style={styles.retakeButton}
+            onPress={() => setImageURI(null)}
+          >
+            <Text style={styles.retakeText}>Retake</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -88,12 +109,49 @@ export default function captureFootSize() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
-  image: {
-    width: 200,
-    height: 200,
-    marginTop: 20,
+  camera: {
+    flex: 1,
+    width: WINDOW_WIDTH,
+    height: WINDOW_HEIGHT,
+  },
+  buttonContainer: {
+    flex: 1,
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    marginBottom: 40,
+  },
+  captureButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#404040",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  previewContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "black",
+  },
+  preview: {
+    width: WINDOW_WIDTH * 0.8,
+    height: WINDOW_HEIGHT * 0.8,
+    resizeMode: "contain",
+  },
+  retakeButton: {
+    position: "absolute",
+    bottom: 50,
+    backgroundColor: "#404040",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  retakeText: {
+    color: "white",
+    fontSize: 16,
   },
 });
