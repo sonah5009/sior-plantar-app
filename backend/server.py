@@ -3,11 +3,17 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import os
 
+UPLOAD_FOLDER = '/home/sonah5009/mysite/uploads'
+
+
 app = Flask(__name__)
 CORS(app)
-UPLOAD_FOLDER = './uploads'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/')
+def hello_world():
+    return 'Hello from Flask!'
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -27,9 +33,3 @@ def upload_file():
         return jsonify({"message": "File successfully uploaded", "filename": filename}), 200
     else:
         return jsonify({"error": "Allowed file types are png, jpg, jpeg"}), 400
-
-# if __name__ == '__main__':
-#     app.run(debug=True, host='0.0.0.1', port=5000)
-
-if __name__ == '__main__':
-    app.run(debug=True, host='192.168.0.18', port=5000)

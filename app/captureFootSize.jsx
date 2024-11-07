@@ -7,6 +7,7 @@ import {
   Alert,
   StyleSheet,
   Dimensions,
+  Button,
 } from "react-native";
 import {
   Camera,
@@ -35,7 +36,7 @@ export default function CaptureFootSize() {
   const sendImageToServer = async (photo) => {
     // photo: {height, uri, width}
     const formData = new FormData();
-    const host = "http://192.168.0.18:5000";
+    const host = "https://sonah5009.pythonanywhere.com";
 
     const imageFile = {
       uri: photo.uri,
