@@ -10,6 +10,7 @@ export default function Index() {
       <Text>발의 압력을 재고 사진을 찍으면 AI가 신발을 추천해드려요.</Text>
       {/* <StatusBar /> */}
       <Link
+        // href="/measurePressure"
         href="/captureFootSize"
         style={{ marginHorizontal: "auto" }}
         asChild
