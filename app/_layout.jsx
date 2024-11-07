@@ -24,11 +24,15 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen
           name="index"
-          options={{ title: "Home", headerShown: true }}
+          options={{ title: "Home", headerShown: false }}
         />
         <Stack.Screen
           name="measurePressure"
           options={{ title: "measurePressure", headerShown: true }}
+        />
+        <Stack.Screen
+          name="captureFootSize"
+          options={{ title: "captureFootSize", headerShown: true }}
         />
       </Stack>
     </SafeAreaProvider>
